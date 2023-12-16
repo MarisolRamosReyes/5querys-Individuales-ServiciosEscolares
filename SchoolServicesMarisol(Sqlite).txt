@@ -1,0 +1,155 @@
+--Tables
+--Student
+CREATE TABLE Student (
+    idStudent INTEGER PRIMARY KEY AUTOINCREMENT,
+    idStudyPlan INTEGER NOT NULL,
+    registrationNumber VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    lastName VARCHAR(50) NOT NULL,
+    phoneNumber VARCHAR(15) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    address VARCHAR(100) NOT NULL,
+    curp CHAR(18) UNIQUE NOT NULL,
+    rfc CHAR(13) UNIQUE NOT NULL,
+    nss CHAR(11) UNIQUE NOT NULL,
+    idLifeInsurance INTEGER NOT NULL,
+    status INTEGER DEFAULT 1 NOT NULL,
+    idUserCreate INTEGER NOT NULL,
+    creationDate DATE NOT NULL,
+    idUserModify INTEGER,
+    modifiedDate DATE
+);
+
+--tabla Career
+CREATE TABLE Career (
+    idCareer INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    status INTEGER DEFAULT 1 NOT NULL,
+    idUserCreate INTEGER NOT NULL,
+    creationDate DATE NOT NULL,
+    idUserModify INTEGER,
+    modifiedDate DATE
+);
+
+--StudyPlan
+CREATE TABLE StudyPlan (
+    idStudyPlan INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50) NOT NULL,
+    code VARCHAR(10) NOT NULL,
+    duration INTEGER NOT NULL,
+    credits INTEGER NOT NULL,
+    idCareer INTEGER NOT NULL,
+    status INTEGER DEFAULT 1 NOT NULL,
+    idUserCreate INTEGER NOT NULL,
+    creationDate DATE NOT NULL,
+    idUserModify INTEGER,
+    modifiedDate DATE,
+    FOREIGN KEY (idCareer) REFERENCES Career (idCareer)
+);
+
+--InstitutionalScholarship
+CREATE TABLE InstitutionalScholarship (
+    idInstitutionalScholarship INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50) NOT NULL,
+    percentage DECIMAL(5, 2) NOT NULL,
+    requirements VARCHAR(100) NOT NULL,
+    status INTEGER DEFAULT 1 NOT NULL,
+    idUserCreate INTEGER NOT NULL,
+    creationDate DATE NOT NULL,
+    idUserModify INTEGER,
+    modifiedDate DATE
+);
+
+--InternalScholarshipDetails
+CREATE TABLE InternalScholarshipDetails (
+    idInternalScholarshipDetails INTEGER PRIMARY KEY AUTOINCREMENT,
+    idInstitutionalScholarship INTEGER NOT NULL,
+    idStudent INTEGER NOT NULL,
+    semester INTEGER NOT NULL,
+    status INTEGER DEFAULT 1 NOT NULL,
+    idUserCreate INTEGER NOT NULL,
+    creationDate DATE NOT NULL,
+    idUserModify INTEGER,
+    modifiedDate DATE,
+    FOREIGN KEY (idStudent) REFERENCES Student (idStudent),
+    FOREIGN KEY (idInstitutionalScholarship) REFERENCES InstitutionalScholarship (idInstitutionalScholarship)
+);
+
+--ExternalScholarshipDetails
+CREATE TABLE ExternalScholarshipDetails (
+    idExternalScholarshipDetails INTEGER PRIMARY KEY AUTOINCREMENT,
+    idStudent INTEGER NOT NULL,
+    idExternalScholarship INTEGER NOT NULL,
+    institution VARCHAR(50) NOT NULL,
+    campus VARCHAR(50) NOT NULL,
+    major VARCHAR(50) NOT NULL,
+    semester INTEGER NOT NULL,
+    status INTEGER DEFAULT 1 NOT NULL,
+    idUserCreate INTEGER NOT NULL,
+    creationDate DATE NOT NULL,
+    idUserModify INTEGER,
+    modifiedDate DATE,
+    FOREIGN KEY (idStudent) REFERENCES Student (idStudent),
+    FOREIGN KEY (idExternalScholarship) REFERENCES ExternalScholarship (idExternalScholarship)
+);
+
+--ExternalScholarship
+CREATE TABLE ExternalScholarship (
+    idExternalScholarship INTEGER PRIMARY KEY AUTOINCREMENT,
+    scholarshipName VARCHAR(50) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    paymentDate DATE NOT NULL,
+    status INTEGER DEFAULT 1 NOT NULL,
+    idUserCreate INTEGER NOT NULL,
+    creationDate DATE NOT NULL,
+    idUserModify INTEGER,
+    modifiedDate DATE
+);
+
+-- Index
+CREATE INDEX IF NOT EXISTS IX_InstitutionalScholarship ON InstitutionalScholarship (idInstitutionalScholarship);
+CREATE INDEX IF NOT EXISTS IX_InternalScholarshipDetails ON InternalScholarshipDetails (idInternalScholarshipDetails);
+CREATE INDEX IF NOT EXISTS IX_ExternalScholarshipDetails ON ExternalScholarshipDetails (idExternalScholarshipDetails);
+CREATE INDEX IF NOT EXISTS IX_ExternalScholarship ON ExternalScholarship (idExternalScholarship);
+CREATE INDEX IF NOT EXISTS IX_Student ON Student (idStudent);
+
+--Insert
+INSERT INTO Career (name, description, idUserCreate,creationDate)
+VALUES ('Ingeniería Informática', 'Ingeniería especilizada en computadoras', 1, '2023-10-23'),
+       ('Ingeniería Mecanica', 'Ingeniería especilizada en mantenimiento de motores', 1, '2023-10-23'),
+       ('Ingeniería Electronica', 'Ingeniería especilizada en circuitos de corriente y robotica', 1, '2023-10-23'),
+       ('Ingeniería Gestión Empresarial', 'Ingeniería especilizada en organización de una empresa', 1, '2023-10-23'),
+       ('Ingeniería Industrial', 'Ingeniería especilizada en conocer varias áreas de una empresa', 1, '2023-10-23'),
+       ('Ingeniería en Energias Renovables', 'Ingeniería especilizada en cuidar el medio ámbiente con tecnología', 1, '2023-10-23');
+
+INSERT INTO StudyPlan(name, code, duration, credits, idCareer,idUserCreate,creationDate)
+VALUES ('Ingeniería Informática', 'INFI-2023', 6, 300, 1, 1, '2023-10-23'),
+       ('Ingeniería Mecanica', 'INMC-2023', 6, 310, 2, 1, '2023-10-23'),
+       ('Ingeniería Electronica', 'INEL-2023', 6, 290, 3, 1, '2023-10-23'),
+       ('Ingeniería Gestión Empresarial', 'INGE-2023', 6, 250, 4, 1, '2023-10-23'),
+       ('Ingeniería Industrial', 'INFI-2023', 5, 320, 5 , 1, '2023-10-23'),
+       ('Ingeniería en Energías Renovables', 'INER-2023', 6, 300, 6, 1, '2023-10-23');
+
+INSERT INTO Student(idStudyPlan, registrationNumber, name, lastName, phoneNumber, email, address, curp, rfc, nss, idLifeInsurance, idUserCreate,creationDate)
+VALUES (1, 'I20050036','Marisol','Ramos Reyes', '8661753793', 'I20050036@monclova.tecnm.mx', 'Matamoros #351', 'RARM020427MCTMRAS0', 'RARM020427MCT', '24334445412', 3, 2, '2023-10-23'),
+       (2, 'I20050033','Pablo Armando','Ramirez Ortiz', '8663458734', 'I20050033@monclova.tecnm.mx', 'Constitución #959', 'RMOP0209HCLPRKO2', 'RMOP0209HCL', '45353453886', 1, 1, '2023-10-23'), 
+	   (3, 'I18003230','Yael Jesús','Reyes Martinez', '8661283495', 'I18003230@monclova.tecnm.mx', 'Serafin Cantu #521', 'REMY000712HCLYRLA0', 'REMY000712HCL', '00548653846', 2, 2, '2023-10-23');
+
+INSERT INTO ExternalScholarship(scholarshipName, amount, paymentDate, idUserCreate, creationDate)
+VALUES ('Tecnologico de campus Monclova',1300.00 ,'2023-10-31', 1, '2023-10-23');
+
+INSERT INTO InstitutionalScholarship (name, percentage, requirements, idUserCreate, creationDate)
+VALUES ('Beca Institucional', 75.00, 'Para alumnos de promedio igual o mayor de 90', 1, '2023-10-23'),
+       ('Beca de Ofandad', 50.00, 'Para alumnos que necesiten una beca', 1, '2023-10-23'), 
+	   ('Beca por parentesco', 20.00, 'Para los alumnos que tienen un familiar trabajando en la institución ', 1, '2023-10-23');
+
+INSERT INTO InternalScholarshipDetails (idInstitutionalScholarship, idStudent, semester, idUserCreate, creationDate)
+VALUES (1, 1, 1, 1, '2023-10-23'),
+       (2, 2, 2, 1, '2023-10-23'),
+       (3, 3, 3, 1, '2023-10-23');
+
+INSERT INTO ExternalScholarshipDetails (idStudent, idExternalScholarship, institution, campus, major, semester, idUserCreate, creationDate)
+VALUES (1, 1, 'Instituto Tecnologico Superior de México', 'campus Monclova', 'Ing Industrial',7, 1, '2023-10-23'), 
+       (2, 1, 'Instituto Tecnologico Superior de México', 'campus Monclova', 'Ing Mecanica',5, 1, '2023-10-23'), 
+       (3, 1, 'Instituto Tecnologico Superior de México', 'campus Monclova', 'Ing Informatica', 3, 1, '2023-10-23');
